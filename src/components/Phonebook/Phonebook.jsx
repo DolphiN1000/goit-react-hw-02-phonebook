@@ -1,6 +1,8 @@
 import { Component } from "react";
 import { nanoid } from "nanoid";
 
+import ContactsList from "./ContactList/ContactList";
+
 class Phonebook extends Component {
     state = {
         contacts: [
@@ -14,9 +16,18 @@ class Phonebook extends Component {
         number: ''
       }
 
+      deleteContack(id){
+        this.setState(({items}) => {
+          const newContacts = items.filter(item => item.id !== id);
+          return {items:newContacts}
+        })
+
+      }
+
       render() {return(
         <div>
-            <h3>Phonebook</h3>
+            <h1>Phonebook</h1>
+            <p>Name</p>
             <input
   type="text"
   name="name"
@@ -24,11 +35,10 @@ class Phonebook extends Component {
   title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
   required
 />
+<button>Add contact</button>
 <div>
-    <h3>Contacts</h3>
-    <ol>
-        <li></li>
-    </ol>
+    <h2>Contacts</h2>
+  <ContactsList items={this.state.contacts} deleteContack={this.deleteContack}/>
 </div>
         </div>
       )}
