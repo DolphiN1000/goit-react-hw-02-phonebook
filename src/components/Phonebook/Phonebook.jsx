@@ -1,20 +1,39 @@
 import { Component } from 'react';
 import { nanoid } from 'nanoid';
 
+import '../../shared/styles/styles.scss';
+
+import ContactsForm from './ContactForm/ContactForm';
+import Filter from './Filter/Filter';
 import ContactsList from './ContactList/ContactList';
+
+import styles from './phonebook.module.scss';
+
+import contacts from './contacts';
 
 class Phonebook extends Component {
   state = {
-    contacts: [
-      { id: nanoid(), name: 'Rosie Simpson', number: '459-12-56' },
-      { id: nanoid(), name: 'Hermione Kline', number: '443-89-12' },
-      { id: nanoid(), name: 'Eden Clements', number: '645-17-79' },
-      { id: nanoid(), name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [...contacts],
     filter: '',
-    name: '',
-    number: '',
   };
+
+  addContact = ({ name, number }) => {
+    if (this.isDulicate(name, number)) {
+      alert(`&{name}: ${number} is in phonebook`);
+      return false;
+    }
+    this.setState(prevState => {
+      const { contacts } = prevState;
+      const newContact = {
+        id: nanoid(),
+        name,
+        number,
+      };
+      return { contacts: [newContact, ...contacts] };
+    });
+  };
+
+  i;
 
   deleteContact = id => {
     this.setState(({ contacts }) => {
@@ -23,26 +42,64 @@ class Phonebook extends Component {
     });
   };
 
+  handleFilter = ({ target }) => {
+    this.setState({ filter: target.value });
+  };
+
+  getFilteredContacts() {
+    const { filter, contacts } = this.state;
+    if (!filter) {
+      return contacts;
+    }
+
+    const normalizedFilter = filter.toLocaleLowerCase();
+    const finded = contacts.filter(({ name, number }) => {
+      return (
+        name.toLocaleLowerCase().includes(normalizedFilter) ||
+        number.toLocaleLowerCase().includes(normalizedFilter)
+      );
+    });
+    return finded;
+  }
+
+  isDulicate(name, number) {
+    const normalizedName = name.toLocaleLowerCase();
+    const normalizedNumber = number.toLocaleLowerCase();
+    const { contacts } = this.state;
+    const result = contacts.find(({ name, number }) => {
+      return (
+        name.toLocaleLowerCase() === normalizedName &&
+        number.toLocaleLowerCase() === normalizedNumber
+      );
+    });
+    return Boolean(result);
+  }
+
   render() {
+    const { addContact, deleteContact, handleFilter } = this;
+    const contacts = this.getFilteredContacts().sort(function (a, b) {
+      if (a.name > b.name) {
+        return 1;
+      }
+      if (a.name < b.name) {
+        return -1;
+      }
+      return 0;
+    });
+    const isContacts = Boolean(contacts.length);
     return (
-      <div>
+      <div className={styles.container}>
         <h1>Phonebook</h1>
-        <p>Name</p>
-        <input
-          type="text"
-          name="name"
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-          required
-        />
-        <button>Add contact</button>
-        <div>
-          <h2>Contacts</h2>
-          <ContactsList
-            contacts={this.state.contacts}
-            deleteContact={this.deleteContact}
-          />
-        </div>
+
+        <ContactsForm onSubmit={addContact} />
+        {/* <div className={styles.contacts}> */}
+        <h2>Contacts</h2>
+        <Filter handleChange={handleFilter} />
+        {isContacts && (
+          <ContactsList contacts={contacts} deleteContact={deleteContact} />
+        )}
+        {!isContacts && <p>Not yet added contacts</p>}
+        {/* </div> */}
       </div>
     );
   }

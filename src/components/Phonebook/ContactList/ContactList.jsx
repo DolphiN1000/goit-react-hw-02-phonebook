@@ -3,7 +3,17 @@ import PropTypes from 'prop-types';
 import styles from './contactList.module.scss';
 
 const ContactsList = ({ contacts, deleteContact }) => {
-  const contactsList = contacts.map(({ id, name, number}) => (
+  const contactsSorted = contacts.sort(function (a, b) {
+    if (a.name.toLowerCase() > b.name.toLowerCase()) {
+      return 1;
+    }
+    if (a.name.toLowerCase() < b.name.toLowerCase()) {
+      return -1;
+    }
+    // a должно быть равным b
+    return 0;
+  });
+  const contactsList = contactsSorted.map(({ id, name, number }) => (
     <li key={id}>
       {name}: {number}
       <button id={id} onClick={() => deleteContact(id)}>
@@ -12,7 +22,7 @@ const ContactsList = ({ contacts, deleteContact }) => {
     </li>
   ));
 
-  return <ol>{contactsList}</ol>;
+  return <ol className={styles.list}> {contactsList}</ol>;
 };
 
 export default ContactsList;
@@ -29,5 +39,5 @@ ContactsList.propTypes = {
       number: PropTypes.string.isRequired,
     })
   ),
-  deleteContact: PropTypes.func.isRequired
-}
+  deleteContact: PropTypes.func.isRequired,
+};
