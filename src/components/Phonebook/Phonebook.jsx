@@ -19,7 +19,7 @@ class Phonebook extends Component {
 
   addContact = ({ name, number }) => {
     if (this.isDulicate(name, number)) {
-      alert(`&{name}: ${number} is in phonebook`);
+      alert(`${name}: ${number} is in phonebook`);
       return false;
     }
     this.setState(prevState => {
@@ -31,9 +31,8 @@ class Phonebook extends Component {
       };
       return { contacts: [newContact, ...contacts] };
     });
+    return true;
   };
-
-  i;
 
   deleteContact = id => {
     this.setState(({ contacts }) => {
