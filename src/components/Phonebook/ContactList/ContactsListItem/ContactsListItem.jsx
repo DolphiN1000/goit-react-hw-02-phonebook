@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import styles from './contactsListItem.module.scss';
+// import styles from './contactsListItem.module.scss';
 
 const ContactsListItem = ({ id, name, number, deleteContact }) => {
   return (
