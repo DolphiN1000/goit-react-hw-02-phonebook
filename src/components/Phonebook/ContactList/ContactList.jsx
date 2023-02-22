@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 
+import ContactsListItem from './ContactsListItem/ContactsListItem';
+
 import styles from './contactList.module.scss';
 
 const ContactsList = ({ contacts, deleteContact }) => {
@@ -10,19 +12,22 @@ const ContactsList = ({ contacts, deleteContact }) => {
     if (a.name.toLowerCase() < b.name.toLowerCase()) {
       return -1;
     }
-    // a должно быть равным b
     return 0;
   });
-  const contactsList = contactsSorted.map(({ id, name, number }) => (
-    <li key={id}>
-      {name}: {number}
-      <button id={id} onClick={() => deleteContact(id)}>
-        Delete
-      </button>
-    </li>
-  ));
 
-  return <ol className={styles.list}> {contactsList}</ol>;
+  const elements = contactsSorted.map(({ id, name, number }) => {
+    return (
+      <ContactsListItem
+        key={id}
+        id={id}
+        name={name}
+        number={number}
+        deleteContact={deleteContact}
+      />
+    );
+  });
+
+  return <ol className={styles.list}>{elements}</ol>;
 };
 
 export default ContactsList;
