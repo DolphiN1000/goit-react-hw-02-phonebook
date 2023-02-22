@@ -15,9 +15,6 @@ const ContactsListItem = ({ id, name, number, deleteContact }) => {
 
 export default ContactsListItem;
 
-ContactsListItem.defaultProps = {
-  contacts: [],
-};
 
 ContactsListItem.propTypes = {
   id: PropTypes.string.isRequired,
